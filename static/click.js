@@ -2,7 +2,7 @@
 (() => {
   const pad = $("#cpspad");
   if (pad) {
-    let dur = 5, clicks = 0, t0 = 0, timer = null, state = "idle";
+    let dur = window.CPS_DUR || 5, clicks = 0, t0 = 0, timer = null, state = "idle";
     const big = $("#big"), sub = $("#sub"), S = id => $("#" + id);
     const best = () => store.get("cpsBest" + dur, 0);
     const showBest = () => S("s-best").textContent = best() ? best().toFixed(2) : "—";

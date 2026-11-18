@@ -180,6 +180,10 @@ T["speaker-test"] = dict(
          ("Why do I hear the right sound on both sides?", "Your device might be set to mono audio. Check your accessibility settings, or the speakers may be wired as mono.")])
 
 ORDER = ["mic-test", "webcam-test", "keyboard-test", "cps-test", "mouse-test", "gamepad-test", "dead-pixel-test", "refresh-rate-test", "speaker-test"]
+import extra_tests
+EXTRA_T = extra_tests.build(T, toolbar, stats, PRIVATE)
+T.update(EXTRA_T)
+MORE = list(EXTRA_T)
 NAV = ["mic-test", "webcam-test", "keyboard-test", "cps-test", "gamepad-test"]
 
 def card(slug):
@@ -196,7 +200,7 @@ def page(slug, title, desc, hero, body, content="", faq=None, js=None, related="
     if faq:
         ld.append({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]})
         faqhtml = '<h2>Frequently asked questions</h2><div class="faq">' + "".join(f"<details><summary>{q}</summary><p>{a}</p></details>" for q, a in faq) + "</div>"
-    foot = "".join(f'<a href="{s}">{T[s]["name"]}</a>' for s in ORDER)
+    foot = "".join(f'<a href="{s}">{T[s]["name"]}</a>' for s in ORDER + MORE)
     scripts = '<script src="common.js"></script>' + (f'<script src="{js}"></script>' if js else "")
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -220,7 +224,7 @@ def page(slug, title, desc, hero, body, content="", faq=None, js=None, related="
 <main class="wrap">
 {hero}
 {body}
-<div class="ad">Ad space</div>
+<div class="ad"></div>
 <section class="content">{content}{faqhtml}</section>
 {related}
 </main>
@@ -234,7 +238,7 @@ def hero(h1, sub, pill="Free · No download · Works in your browser"):
     return f'<section class="hero"><span class="pill"><i></i>{pill}</span><h1>{h1}</h1><p>{sub}</p><div class="trust"><span>100% free</span><span>Private</span><span>No sign-up</span><span>Works on phone</span></div></section>'
 
 pages = []
-home_body = '<div class="tools" id="all">' + "".join(card(s) for s in ORDER) + "</div>"
+home_body = '<div class="tools" id="all">' + "".join(card(s) for s in ORDER) + "</div>" + '<section class="content"><div class="section-h"><h2>More tests &amp; tools</h2></div></section><div class="tools">' + "".join(card(s) for s in MORE) + "</div>"
 pages.append(("index", page("index", "Device Test – Test Your Mic, Webcam, Keyboard, Mouse & More",
     "Free online device tests. Check your microphone, webcam, keyboard, mouse, controller, speakers and screen in seconds. No download, private and mobile-friendly.",
     hero("Test any device <span>in seconds</span>", "Check your microphone, webcam, keyboard, mouse, controller, speakers and screen. Everything runs right in your browser."),
@@ -245,9 +249,10 @@ pages.append(("index", page("index", "Device Test – Test Your Mic, Webcam, Key
          ("Is it safe to allow camera and microphone access?", "Yes. Access is only used to show the test on your screen. Nothing is recorded or sent to our servers, and you can revoke permission anytime in your browser settings."),
          ("Which browser works best?", "Recent versions of Chrome, Edge, Firefox and Safari all work. Chrome and Edge have the best support for controllers and vibration.")])))
 
-for s in ORDER:
+for s in ORDER + MORE:
     t = T[s]
-    rel = [x for x in ORDER if x != s][:6]
+    rel = [x for x in ORDER + MORE if x != s and T[x]["js"] == t["js"]][:3]
+    rel += [x for x in ORDER if x != s and x not in rel][:6 - len(rel)]
     related = '<section class="content"><div class="section-h"><h2>More device tests</h2></div></section><div class="tools">' + "".join(card(x) for x in rel) + "</div>"
     pages.append((s, page(s, t["title"], t["desc"], hero(t["h1"], t["sub"]), t["tool"], t["content"], t["faq"], t["js"], related)))
 
@@ -261,7 +266,10 @@ for slug, html in pages:
     if PREVIEW:
         html = re.sub(r'href="([a-z0-9-]+)(#[a-z]+)?"', lambda m: f'href="{m.group(1)}.html{m.group(2) or ""}"', html).replace('href="./#all"', 'href="index.html#all"').replace('href="./"', 'href="index.html"')
     (OUT / f"{slug}.html").write_text(html)
-urls = "".join(f"<url><loc>{DOMAIN}/{'' if s == 'index' else s}</loc></url>" for s, _ in pages if s != "privacy")
+urls = "".join(f"<url><loc>{DOMAIN}/{'' if s == 'index' else s}</loc></url>" for s, _ in pages)
 (OUT / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>')
 (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {DOMAIN}/sitemap.xml\n")
 print("built", len(pages), "pages")
+
+import adready
+adready.run(OUT, SITE, DOMAIN, "All device tests on this site")
