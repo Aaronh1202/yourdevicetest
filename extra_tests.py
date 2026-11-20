@@ -190,4 +190,64 @@ def build(T, toolbar, stats, PRIVATE):
         faq=[("What's the difference between screen and window size?", "Screen resolution is your whole display. Window size is just the browser area, which is smaller because of toolbars and taskbars."),
              ("Is this information sent anywhere?", "No. It's read by your browser and shown only to you.")])
 
+    # ---- more solid color screens (Nov 20) ----
+    COLORS = [
+        ("red-screen", "Red Screen", "#ff0000", "🟥", "a soft red night light, testing for stuck pixels, photography color gels and as a dim light that's easy on night vision",
+         "Red light preserves night vision better than white, which is why astronomers and pilots use it in the dark."),
+        ("blue-screen", "Blue Screen", "#0000ff", "🟦", "chroma-key (blue screen) video effects, testing for stuck pixels and checking the blue sub-pixels on your display",
+         "Blue screens were the original chroma-key color in film. Today green is more common because cameras capture it with less noise, but blue is still used when the subject wears green."),
+        ("yellow-screen", "Yellow Screen", "#ffff00", "🟨", "a warm reading light, mood lighting, checking for stuck pixels and testing color uniformity",
+         "Yellow is made by turning on the red and green sub-pixels together, so it's a quick way to check both at once."),
+        ("orange-screen", "Orange Screen", "#ff8000", "🟧", "a warm evening light, mood lighting for videos and checking color uniformity",
+         "Warm orange light has less blue in it, so it's gentler on your eyes late at night than a white screen."),
+        ("pink-screen", "Pink Screen", "#ff69b4", "🩷", "a soft colored light for photos and video calls, mood lighting and parties",
+         "A pink screen in front of you gives a warm, flattering glow on video calls."),
+        ("purple-screen", "Purple Screen", "#8000ff", "🟪", "mood and party lighting, colored backgrounds for photos and checking the red and blue sub-pixels",
+         "Purple mixes the red and blue sub-pixels, so a pixel that shows only one of them will stand out."),
+        ("gray-screen", "Gray Screen", "#808080", "🩶", "checking for uneven backlight, banding and dirty screen effect, and as a neutral background for color checking",
+         "A mid-gray screen is the best way to spot the 'dirty screen effect': blotchy, uneven patches that are hard to see on white or black."),
+    ]
+    for slug, name, col, emo, uses, fact in COLORS:
+        cname = name.split()[0].lower()
+        solid(slug, name, col, emo, f"{name} – Full Screen {name.split()[0]} Color (Free)",
+              f"Turn your whole screen {cname} in one click. Use it for {uses.split(',')[0]} and more.",
+              f"Fill your whole screen with solid {cname}. Click the button to go full screen.",
+              f"""<h2>What can I use a {cname} screen for?</h2><p>People use a full {cname} screen for {uses}.</p>
+<h2>Did you know?</h2><p>{fact}</p>
+<h2>How to use it</h2><ol><li>Press <b>Open full screen</b>.</li><li>Turn your screen brightness up (or down for a softer light).</li><li>Click anywhere or press Esc to exit.</li></ol><p>You can switch to any other color with the swatches or the color picker.</p>""",
+              [(f"Will a {cname} screen damage my display?", "No. It's just showing a color, which your screen does all the time. Avoid leaving any static image on an OLED screen for many hours to prevent burn-in."),
+               ("Does it work on phones?", "Yes. On iPhone, full screen mode may be limited by Safari, but the color still fills the page.")])
+
+    E["bass-test"] = dict(
+        emoji="🔊", color="#fbbf24", name="Bass Test", card="Test your speakers' and subwoofer's low end",
+        title="Bass Test – Subwoofer & Speaker Low Frequency Test (20–200 Hz)",
+        desc="Free bass test. Play low tones from 20 to 200 Hz to check how deep your speakers, headphones or subwoofer can go, and listen for rattles.",
+        h1="Bass <span>Test</span>", sub="Play low tones to see how deep your speakers or subwoofer can go. Start at a low volume.", js="speaker.js",
+        tool=sp.replace('value="433"', f'value="{fval(60)}"'),
+        content="""<h2>How to test bass</h2><ol><li>Set your volume low, then press <b>Play tone</b>.</li><li>Drag the slider down slowly from 200 Hz toward 20 Hz.</li><li>Note where the tone fades away: that's roughly the lowest note your speakers can play.</li></ol>
+<h2>What to expect</h2><ul><li><b>Phone and laptop speakers:</b> usually fade out around 150–250 Hz.</li><li><b>Headphones:</b> many reach 20–40 Hz.</li><li><b>Bookshelf speakers:</b> typically 50–80 Hz.</li><li><b>Subwoofers:</b> 20–40 Hz, often felt more than heard.</li></ul>
+<h2>Listen for problems</h2><p>Buzzing or rattling at certain frequencies usually means something loose: a speaker grille, a shelf or an object nearby. A crackle at every frequency can point to a damaged speaker cone.</p>""",
+        faq=[("Can a bass test damage my speakers?", "Very loud low tones can. Keep the volume moderate and stop if you hear distortion."),
+             ("Why can't I hear 20 Hz?", "Most speakers can't reproduce it, and even when they can, very low bass is felt more than heard.")])
+    E["left-right-sound-test"] = dict(
+        emoji="🔈", color="#fbbf24", name="Left Right Sound Test", card="Check stereo left and right channels",
+        title="Left Right Sound Test – Stereo Audio Channel Check",
+        desc="Free left and right sound test. Play audio on the left channel, right channel or both to check your stereo speakers, headphones or car audio wiring.",
+        h1="Left Right <span>Sound Test</span>", sub="Press Left or Right and check that the sound comes from the correct side.", js="speaker.js", tool=sp,
+        content="""<h2>How to check stereo channels</h2><p>Press <b>Left</b>, then <b>Right</b>. Each sound should come only from that side. If both sides play the same, mono audio may be switched on. If they're swapped, your speakers are plugged into the wrong outputs.</p>
+<h2>Common fixes</h2><ul><li><b>Swapped sides:</b> swap the speaker cables, or wear headphones the right way round (look for the L and R marks).</li><li><b>Sound on both sides:</b> turn off mono audio in your accessibility settings.</li><li><b>One side quiet:</b> check the balance slider in your sound settings.</li></ul>
+<h2>Why stereo matters</h2><p>Games use left and right sound to tell you where footsteps come from, and music and movies are mixed for stereo. A swapped or missing channel changes how everything sounds.</p>""",
+        faq=[("Does this work for car audio or soundbars?", "Yes. Connect your phone by Bluetooth or cable and run the test."),
+             ("Why is there no sound at all?", "Check the volume, mute switch and which output device is selected, then try the Speaker Test.")])
+    E["jitter-click-test"] = dict(
+        emoji="🖱️", color="#a3e635", name="Jitter Click Test", card="Test your jitter clicking speed",
+        title="Jitter Click Test – Jitter Clicking CPS Speed Test",
+        desc="Free jitter click test. Measure your jitter clicking speed in clicks per second, compare with normal clicking and track your best score.",
+        h1="Jitter Click <span>Test</span>", sub="Tense your arm and jitter click as fast as you can. Pick a time and start clicking.", js="click.js", tool=base_cps,
+        content="""<h2>What is jitter clicking?</h2><p>Jitter clicking means tensing the muscles in your forearm and wrist so your hand vibrates, which makes your finger click very fast. Good jitter clickers reach 10–14 CPS, compared with 6–7 CPS for normal clicking.</p>
+<h2>How to jitter click safely</h2><ul><li>Rest your hand on the mouse with your finger on the button.</li><li>Tense your forearm until your hand shakes slightly, and let the shaking press the button.</li><li>Keep sessions short and take breaks: jitter clicking puts strain on your wrist and arm.</li></ul>
+<h2>Jitter vs butterfly clicking</h2><p>Butterfly clicking alternates two fingers on the same button and can be even faster, but some games and servers limit it. Jitter clicking uses one finger, so it works on any mouse.</p>""",
+        faq=[("Is jitter clicking bad for you?", "Doing it for long periods can cause wrist and arm strain. Warm up, keep sessions short and stop if it hurts."),
+             ("What CPS is good for jitter clicking?", "10 CPS is good, 12 is great and 14+ is exceptional.")])
+
     return E
